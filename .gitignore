@@ -1,0 +1,12 @@
+node_modules
+dist
+.DS_Store
+*.log
+.vscode
+.idea
+.env*
+!.env.example
+
+# MemPalace per-project files (issue #185)
+mempalace.yaml
+entities.json

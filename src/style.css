@@ -1,0 +1,198 @@
+/* Mirage — global styles. 98.css chrome; heat-haze and static loading states. */
+
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+:root {
+  --fd-bg: #c0c0c0;
+  --fd-blue: #000080;
+  --fd-red: #c00000;
+  --fd-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #008080;
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
+  font-size: 13px;
+  color: #000;
+  overflow: hidden;
+}
+
+#app { height: 100vh; padding: 0; }
+
+.fd-window { height: 100vh; font-size: 14px; }
+.fd-window .title-bar { font-size: 14px; }
+.fd-window .status-bar { font-size: 13px; }
+
+/* Toolbar */
+.fd-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  background: var(--fd-bg);
+  border-bottom: 1px solid #808080;
+}
+.fd-iconbtn { width: 28px; height: 24px; min-width: 28px; padding: 0; font-size: 14px; line-height: 1; }
+.fd-toolbar-sep { width: 1px; height: 22px; background: #808080; border-right: 1px solid #fff; margin: 0 4px; }
+.fd-label { font-size: 13px; color: #000; }
+.fd-toolbar input[type="text"] { font-family: "MS Sans Serif", Tahoma, sans-serif; }
+
+/* Status bar */
+.status-bar { display: flex; padding: 2px; gap: 2px; font-size: 12px; }
+.status-bar-field { margin: 0; padding: 2px 6px; }
+
+/* Page area: the image is letterboxed (object-fit: contain) inside .page;
+   hotspots.ts positions .hotspots over the rendered image. */
+.fd-content { background: #808080; }
+.page { position: relative; width: 100%; height: 100%; overflow: hidden; }
+.page img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.page img:not([src]) { visibility: hidden; }
+.hotspots { position: absolute; z-index: 2; }
+.hotspots.is-over-link, .hotspots.is-unmapped { cursor: pointer; }
+.fd-hotspot-hover {
+  position: absolute;
+  pointer-events: none;
+  outline: 1px dotted rgba(0, 0, 128, 0.7);
+  background: rgba(255, 255, 160, 0.12);
+}
+.hotspots input.fd-hotspot-input {
+  position: absolute;
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font: 14px Arial, sans-serif;
+  color: #000;
+  outline: none;
+}
+.hotspots input.fd-hotspot-input:focus { background: rgba(255, 255, 255, 0.92); outline: 1px dotted var(--fd-blue); }
+
+/* Same-site navigation: the current page wavers in a heat haze */
+.page.is-hazy img {
+  filter: blur(2px) saturate(0.35) brightness(1.08);
+  animation: fd-haze 1.4s ease-in-out infinite alternate;
+}
+.page.is-hazy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 230, 180, 0.18) 50%, transparent 100%);
+  background-size: 100% 300%;
+  animation: fd-shimmer 2.2s linear infinite;
+}
+@keyframes fd-haze {
+  from { transform: scale(1.004) skewX(0.4deg); }
+  to   { transform: scale(0.996) skewX(-0.4deg); }
+}
+@keyframes fd-shimmer {
+  from { background-position: 0 100%; }
+  to   { background-position: 0 -200%; }
+}
+
+/* A new page fades in from noise */
+.page.is-arriving img { animation: fd-arrive 0.9s ease-out; }
+.page.is-arriving::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--fd-noise);
+  opacity: 0;
+  animation: fd-noise-out 0.9s ease-out;
+}
+@keyframes fd-arrive {
+  from { opacity: 0; filter: grayscale(1) contrast(2.5) blur(3px); }
+  to   { opacity: 1; filter: none; }
+}
+@keyframes fd-noise-out {
+  from { opacity: 0.9; }
+  to   { opacity: 0; }
+}
+
+/* New universe: static "tuning" screen */
+.fd-tuning {
+  position: absolute;
+  inset: 2px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111 var(--fd-noise);
+  animation: fd-static 0.25s steps(3) infinite;
+}
+.fd-tuning p {
+  margin: 0;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #9f9;
+  font-family: "VT323", "Courier New", monospace;
+  font-size: 28px;
+}
+@keyframes fd-static {
+  0%   { background-position: 0 0; }
+  33%  { background-position: -57px 31px; }
+  66%  { background-position: 43px -71px; }
+  100% { background-position: 0 0; }
+}
+
+/* Error notice: the previous page stays visible behind it */
+.fd-faded { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 4; width: 320px; }
+.fd-faded .window-body { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.fd-faded p { margin: 0; color: var(--fd-red); font-weight: bold; }
+
+/* Splash */
+.fd-splash {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  cursor: pointer;
+}
+.fd-splash > .window { cursor: default; width: 540px; }
+.fd-splash-body { padding: 14px 18px; font-size: 14px; }
+.fd-splash-body button { font-size: 13px; }
+
+/* Dev panel */
+.fd-devpanel {
+  position: fixed;
+  top: 60px;
+  right: 24px;
+  z-index: 10000;
+  width: 440px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+}
+.fd-devpanel .window-body { font-size: 12px; max-height: 80vh; overflow-y: auto; }
+.fd-devpanel select { width: 100%; }
+.fd-runlog { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 11px; }
+.fd-runlog th, .fd-runlog td { padding: 1px 4px; text-align: left; }
+.fd-run-failed { color: var(--fd-red); }
+
+/* Title bar mascot */
+#fd-title-prefix { display: inline-block; animation: fd-bob 1.6s ease-in-out infinite; }
+@keyframes fd-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-1px); }
+}
+
+/* Faint CRT scanlines over the whole window */
+.fd-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0, 0, 0, 0.02) 2px, rgba(0, 0, 0, 0.02) 3px);
+  z-index: 1;
+}

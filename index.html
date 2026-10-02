@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mirage</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.21/dist/98.css" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23c0c0c0'/%3E%3Crect x='2' y='2' width='12' height='2' fill='%23ffffff'/%3E%3Crect x='2' y='12' width='12' height='2' fill='%23808080'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23ffffff'/%3E%3Crect x='12' y='2' width='2' height='12' fill='%23808080'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%23000080'/%3E%3Ctext x='8' y='10' font-size='6' fill='%23ffff00' text-anchor='middle' font-family='monospace'%3EF%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="window fd-window" style="width: 100%; height: 100vh; display: flex; flex-direction: column;">
+        <div class="title-bar">
+          <div class="title-bar-text">
+            <span id="fd-title-prefix">🌐</span>
+            <span id="fd-title">Mirage — Untitled Page</span>
+          </div>
+        </div>
+
+        <div class="fd-toolbar">
+          <button id="fd-back" aria-label="Back" title="Back" class="fd-iconbtn">◀</button>
+          <button id="fd-forward" aria-label="Forward" title="Forward" class="fd-iconbtn">▶</button>
+          <button id="fd-reload" aria-label="Reload" title="Re-tune (same address, new universe)" class="fd-iconbtn">⟳</button>
+          <button id="fd-home" aria-label="Home" title="Home" class="fd-iconbtn">🏠</button>
+          <span class="fd-toolbar-sep"></span>
+          <span class="fd-label">Address:</span>
+          <input id="fd-url" type="text" style="flex: 1; min-width: 200px;" placeholder="type anything" />
+          <button id="fd-go" class="default">Go!</button>
+          <span class="fd-toolbar-sep"></span>
+          <button id="fd-devpanel-btn" class="fd-iconbtn" title="Dev Panel (Ctrl+Shift+D)" style="font-size:11px; padding: 0 6px;">⚙ Dev</button>
+        </div>
+
+        <div class="window-body fd-content" style="flex: 1; padding: 2px; position: relative; overflow: hidden;">
+          <div id="fd-page" class="page">
+            <img id="fd-img" alt="" />
+            <div id="fd-hotspots" class="hotspots"></div>
+          </div>
+          <div id="fd-tuning" class="fd-tuning" hidden><p id="fd-tuning-text"></p></div>
+          <div id="fd-faded" class="window fd-faded" hidden>
+            <div class="window-body">
+              <p>⚠ The mirage faded.</p>
+              <button id="fd-faded-retry">Retry</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <p class="status-bar-field" style="flex:1; min-width:0;" id="fd-status-main">Home universe: unreachable.</p>
+          <p class="status-bar-field">Tuned to dimension #<span id="fd-dimension">4,817</span></p>
+          <p class="status-bar-field" style="min-width:180px; font-family: monospace; font-size:10px; white-space:nowrap; overflow:hidden;" id="fd-status-diag"></p>
+          <p class="status-bar-field">🌐 Mirage v0.2</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="fd-splash" class="fd-splash">
+      <div class="window">
+        <div class="title-bar">
+          <div class="title-bar-text">Mirage</div>
+          <div class="title-bar-controls">
+            <button aria-label="Close" id="fd-splash-close"></button>
+          </div>
+        </div>
+        <div class="window-body fd-splash-body">
+          <h2 style="margin: 4px 0 12px 0;">🌐 Welcome to Mirage</h2>
+          <p>Mirage is a browser that can only reach the internets of neighbouring parallel universes. Every page arrives from a dimension adjacent to ours: familiar, but never quite right.</p>
+          <p><strong>How to navigate the multiverse:</strong></p>
+          <ul style="margin: 6px 0 12px 20px;">
+            <li>Type anything in the Address bar and press <strong>Go!</strong> to tune to a new dimension</li>
+            <li>Click anything on a page. Most links keep you on the site; ads and partner badges take you somewhere else entirely</li>
+            <li>Type into a page's search box and press Enter</li>
+            <li>Use ◀ ▶ to retrace your steps; ⟳ re-tunes the same address to a new universe</li>
+          </ul>
+          <p><strong>Note:</strong> each page takes a few seconds to come into focus.</p>
+          <div class="field-row" style="justify-content: flex-end; margin-top: 12px;">
+            <button class="default" id="fd-splash-go">Tune In 📡</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
