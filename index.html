@@ -4,8 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mirage</title>
+    <meta name="description" content="A parody web browser that only reaches the internets of neighbouring parallel universes. Every page is drawn live by an image model." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mirage" />
+    <meta property="og:description" content="Browse the web that was never there." />
+    <meta property="og:image" content="%VITE_PUBLIC_URL%/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.21/dist/98.css" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23c0c0c0'/%3E%3Crect x='2' y='2' width='12' height='2' fill='%23ffffff'/%3E%3Crect x='2' y='12' width='12' height='2' fill='%23808080'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23ffffff'/%3E%3Crect x='12' y='2' width='2' height='12' fill='%23808080'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%23000080'/%3E%3Ctext x='8' y='10' font-size='6' fill='%23ffff00' text-anchor='middle' font-family='monospace'%3EF%3C/text%3E%3C/svg%3E" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23c0c0c0'/%3E%3Crect x='2' y='2' width='12' height='2' fill='%23ffffff'/%3E%3Crect x='2' y='12' width='12' height='2' fill='%23808080'/%3E%3Crect x='2' y='2' width='2' height='12' fill='%23ffffff'/%3E%3Crect x='12' y='2' width='2' height='12' fill='%23808080'/%3E%3Crect x='4' y='4' width='8' height='8' fill='%23000080'/%3E%3Ctext x='8' y='10' font-size='6' fill='%23ffff00' text-anchor='middle' font-family='monospace'%3EM%3C/text%3E%3C/svg%3E" />
   </head>
   <body>
     <div id="app">
@@ -49,7 +55,7 @@
           <p class="status-bar-field fd-status-main" id="fd-status-main">Home universe: unreachable.</p>
           <p class="status-bar-field fd-status-dim">Tuned to dimension #<span id="fd-dimension">4,817</span></p>
           <p class="status-bar-field fd-status-diag" id="fd-status-diag"></p>
-          <p class="status-bar-field">🌐 Mirage v0.2</p>
+          <p class="status-bar-field" id="fd-version">🌐 Mirage</p>
         </div>
       </div>
     </div>
@@ -73,6 +79,7 @@
             <li>Use ◀ ▶ to retrace your steps; ⟳ re-tunes the same address to a new universe</li>
           </ul>
           <p><strong>Note:</strong> each page takes a few seconds to come into focus.</p>
+          <p class="fd-splash-note">Every page is AI-generated parody. Nothing on it is real, and any resemblance to an actual website is a glitch in the multiverse.</p>
           <div class="field-row" style="justify-content: flex-end; margin-top: 12px;">
             <button class="default" id="fd-splash-go">Tune In 📡</button>
           </div>

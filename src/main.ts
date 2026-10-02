@@ -38,6 +38,7 @@ const dom = {
   status: $<HTMLParagraphElement>("#fd-status-main"),
   diag: $<HTMLParagraphElement>("#fd-status-diag"),
   dimension: $<HTMLSpanElement>("#fd-dimension"),
+  version: $<HTMLParagraphElement>("#fd-version"),
   splash: $<HTMLDivElement>("#fd-splash"),
   splashGo: $<HTMLButtonElement>("#fd-splash-go"),
   splashClose: $<HTMLButtonElement>("#fd-splash-close"),
@@ -253,6 +254,7 @@ function wire(): void {
 
 wire();
 setDimension(randomDimension());
+dom.version.textContent = `🌐 Mirage v${__APP_VERSION__}`;
 dom.back.disabled = true;
 dom.forward.disabled = true;
 
