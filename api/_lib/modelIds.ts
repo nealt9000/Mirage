@@ -2,11 +2,12 @@
 // (dev panel). Anything not allowed falls back to the default, so a public
 // deployment can't be driven onto arbitrary (expensive) models. Extend the
 // list with MIRAGE_ALLOWED_MODELS (comma-separated).
+// Pricier alternatives (e.g. google/gemini-3.1-flash-image) must be listed explicitly.
 
 export const DEFAULT_PAGE_MODEL = "google/gemini-3.1-flash-lite-image";
 export const DEFAULT_LINK_MODEL = "google/gemini-3-flash-preview";
 
-const BUILT_IN_MODELS = [DEFAULT_PAGE_MODEL, DEFAULT_LINK_MODEL, "google/gemini-3.1-flash-image"];
+const BUILT_IN_MODELS = [DEFAULT_PAGE_MODEL, DEFAULT_LINK_MODEL];
 
 const MODEL_ID_RE = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9.:_-]*$/i;
 

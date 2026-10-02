@@ -15,6 +15,9 @@ describe("pickModel", () => {
     expect(pickModel("../../etc", DEFAULT_PAGE_MODEL)).toBe(DEFAULT_PAGE_MODEL);
     expect(pickModel(undefined, DEFAULT_PAGE_MODEL)).toBe(DEFAULT_PAGE_MODEL);
   });
+  it("does not allow the pricier image model unless listed", () => {
+    expect(pickModel("google/gemini-3.1-flash-image", DEFAULT_PAGE_MODEL)).toBe(DEFAULT_PAGE_MODEL);
+  });
   it("accepts extra models listed in MIRAGE_ALLOWED_MODELS", () => {
     process.env.MIRAGE_ALLOWED_MODELS = " openai/gpt-5-image , x/y ";
     expect(pickModel("openai/gpt-5-image", DEFAULT_PAGE_MODEL)).toBe("openai/gpt-5-image");

@@ -127,10 +127,12 @@ describe("POST /api/page", () => {
     expect(sentBody(fetchMock, 0).model).toBe(DEFAULT_PAGE_MODEL);
   });
 
-  it("forwards an allowed model id", async () => {
+  it("forwards a model id allowed by MIRAGE_ALLOWED_MODELS", async () => {
+    process.env.MIRAGE_ALLOWED_MODELS = "google/gemini-3.1-flash-image";
     const fetchMock = vi.fn().mockResolvedValue(completion("", IMG));
     vi.stubGlobal("fetch", fetchMock);
     await POST(request({ ...typed(), model: "google/gemini-3.1-flash-image" }));
     expect(sentBody(fetchMock, 0).model).toBe("google/gemini-3.1-flash-image");
+    delete process.env.MIRAGE_ALLOWED_MODELS;
   });
 });

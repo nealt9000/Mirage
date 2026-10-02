@@ -3,7 +3,7 @@
 // /api/page builds the prompt and draws each page; /api/links maps its links in the background.
 
 import "./style.css";
-import { loadSettings, setupDevPanel } from "./devPanel";
+import { DEFAULT_SETTINGS, loadSettings, setupDevPanel } from "./devPanel";
 import { HotspotLayer } from "./hotspots";
 import { LoadingView } from "./loading";
 import { recordRun } from "./modelStats";
@@ -48,7 +48,8 @@ const dom = {
 
 const session = new Session();
 const throttle = new NavThrottle();
-let settings = loadSettings();
+const devTools = import.meta.env.DEV || import.meta.env.VITE_MIRAGE_DEV_TOOLS === "1";
+let settings = devTools ? loadSettings() : { ...DEFAULT_SETTINGS };
 let inflight: AbortController | null = null;
 let lastRequest: PageRequest | null = null;
 let resolveAc: AbortController | null = null;
@@ -238,10 +239,14 @@ function wire(): void {
     if (e.key === "Escape") hideSplash();
   });
 
-  const panel = setupDevPanel((s) => {
-    settings = s;
-  });
-  dom.devBtn.addEventListener("click", panel.toggle);
+  if (devTools) {
+    const panel = setupDevPanel((s) => {
+      settings = s;
+    });
+    dom.devBtn.addEventListener("click", panel.toggle);
+  } else {
+    document.querySelectorAll("[data-dev]").forEach((el) => el.remove());
+  }
 }
 
 wire();
@@ -249,4 +254,4 @@ setDimension(randomDimension());
 dom.back.disabled = true;
 dom.forward.disabled = true;
 
-(window as unknown as { __mirage: unknown }).__mirage = { session, navigate };
+if (devTools) (window as unknown as { __mirage: unknown }).__mirage = { session, navigate };
