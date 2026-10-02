@@ -30,6 +30,7 @@ const dom = {
   page: $<HTMLDivElement>("#fd-page"),
   img: $<HTMLImageElement>("#fd-img"),
   layer: $<HTMLDivElement>("#fd-hotspots"),
+  idle: $<HTMLDivElement>("#fd-idle"),
   tuning: $<HTMLDivElement>("#fd-tuning"),
   tuningText: $<HTMLParagraphElement>("#fd-tuning-text"),
   faded: $<HTMLDivElement>("#fd-faded"),
@@ -121,6 +122,7 @@ async function navigate(req: PageRequest): Promise<void> {
 }
 
 function show(entry: Entry): void {
+  dom.idle.hidden = true;
   dom.img.src = entry.imageDataUri;
   dom.img.alt = entry.title;
   dom.urlBar.value = entry.url;
