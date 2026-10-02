@@ -3,6 +3,9 @@
 
 import type { Entry, Link, PageRequest } from "./types";
 
+/** Longest text a visitor can type; matches the server's MAX_USER_TEXT. */
+export const MAX_INPUT_CHARS = 200;
+
 export class Session {
   private entries: Entry[] = [];
   private cursor = -1;

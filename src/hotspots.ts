@@ -4,6 +4,7 @@
 // overlapping boxes resolve one way (smallest wins). Only text inputs are
 // real elements, so visitors can type into the page's search boxes.
 
+import { MAX_INPUT_CHARS } from "./session";
 import type { Box, Link, Point } from "./types";
 
 export type Rect = { left: number; top: number; width: number; height: number };
@@ -112,6 +113,7 @@ export class HotspotLayer {
     for (const link of inputs) {
       const input = document.createElement("input");
       input.type = "text";
+      input.maxLength = MAX_INPUT_CHARS;
       input.className = "fd-hotspot-input";
       input.title = link.dest;
       input.setAttribute("aria-label", link.label);
