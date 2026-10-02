@@ -6,6 +6,11 @@
   --fd-bg: #c0c0c0;
   --fd-blue: #000080;
   --fd-red: #c00000;
+  /* Desktop margin around the window, and the height of the window chrome
+     (title bar + toolbar + status bar + borders). The page area gets what's
+     left, at 4:3. */
+  --fd-gutter: 16px;
+  --fd-chrome-h: 100px;
   --fd-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -23,9 +28,21 @@ html, body {
   overflow: hidden;
 }
 
-#app { height: 100vh; padding: 0; }
+#app {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fd-gutter);
+}
 
-.fd-window { height: 100vh; font-size: 14px; }
+.fd-window {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, calc((100dvh - 2 * var(--fd-gutter) - var(--fd-chrome-h)) * 4 / 3));
+  font-size: 14px;
+}
 .fd-window .title-bar { font-size: 14px; }
 .fd-window .status-bar { font-size: 13px; }
 
@@ -41,15 +58,25 @@ html, body {
 .fd-iconbtn { width: 28px; height: 24px; min-width: 28px; padding: 0; font-size: 14px; line-height: 1; }
 .fd-toolbar-sep { width: 1px; height: 22px; background: #808080; border-right: 1px solid #fff; margin: 0 4px; }
 .fd-label { font-size: 13px; color: #000; }
-.fd-toolbar input[type="text"] { font-family: "MS Sans Serif", Tahoma, sans-serif; }
+.fd-url { flex: 1; min-width: 120px; font-family: "MS Sans Serif", Tahoma, sans-serif; }
+.fd-devbtn { width: auto; font-size: 11px; padding: 0 6px; }
 
 /* Status bar */
 .status-bar { display: flex; padding: 2px; gap: 2px; font-size: 12px; }
 .status-bar-field { margin: 0; padding: 2px 6px; }
+.fd-status-main { flex: 1; min-width: 0; }
+.fd-status-diag { min-width: 180px; font-family: monospace; font-size: 10px; white-space: nowrap; overflow: hidden; }
 
 /* Page area: the image is letterboxed (object-fit: contain) inside .page;
    hotspots.ts positions .hotspots over the rendered image. */
-.fd-content { background: #808080; }
+.fd-content {
+  position: relative;
+  flex: none;
+  aspect-ratio: 4 / 3;
+  padding: 2px;
+  overflow: hidden;
+  background: #808080;
+}
 .page { position: relative; width: 100%; height: 100%; overflow: hidden; }
 .page img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .page img:not([src]) { visibility: hidden; }
@@ -145,7 +172,7 @@ html, body {
 }
 
 /* Error notice: the previous page stays visible behind it */
-.fd-faded { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 4; width: 320px; }
+.fd-faded { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 4; width: min(320px, calc(100% - 32px)); }
 .fd-faded .window-body { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .fd-faded p { margin: 0; color: var(--fd-red); font-weight: bold; }
 
@@ -159,9 +186,10 @@ html, body {
   align-items: flex-start;
   justify-content: center;
   padding-top: 12vh;
+  overflow-y: auto;
   cursor: pointer;
 }
-.fd-splash > .window { cursor: default; width: 540px; }
+.fd-splash > .window { cursor: default; width: min(540px, calc(100% - 24px)); }
 .fd-splash-body { padding: 14px 18px; font-size: 14px; }
 .fd-splash-body button { font-size: 13px; }
 
@@ -171,7 +199,7 @@ html, body {
   top: 60px;
   right: 24px;
   z-index: 10000;
-  width: 440px;
+  width: min(440px, calc(100vw - 24px));
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
 }
 .fd-devpanel .window-body { font-size: 12px; max-height: 80vh; overflow-y: auto; }
@@ -195,4 +223,11 @@ html, body {
   pointer-events: none;
   background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0, 0, 0, 0.02) 2px, rgba(0, 0, 0, 0.02) 3px);
   z-index: 1;
+}
+
+/* Phones: the window fills the width; drop the least useful chrome */
+@media (max-width: 700px) {
+  :root { --fd-gutter: 0px; }
+  .fd-label, .fd-status-dim, .fd-status-diag { display: none; }
+  .fd-url { min-width: 0; }
 }

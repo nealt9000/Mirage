@@ -9,7 +9,7 @@
   </head>
   <body>
     <div id="app">
-      <div class="window fd-window" style="width: 100%; height: 100vh; display: flex; flex-direction: column;">
+      <div class="window fd-window">
         <div class="title-bar">
           <div class="title-bar-text">
             <span id="fd-title-prefix">🌐</span>
@@ -24,13 +24,13 @@
           <button id="fd-home" aria-label="Home" title="Home" class="fd-iconbtn">🏠</button>
           <span class="fd-toolbar-sep"></span>
           <span class="fd-label">Address:</span>
-          <input id="fd-url" type="text" maxlength="200" style="flex: 1; min-width: 200px;" placeholder="type anything" />
+          <input id="fd-url" class="fd-url" type="text" maxlength="200" placeholder="type anything" />
           <button id="fd-go" class="default">Go!</button>
           <span class="fd-toolbar-sep" data-dev></span>
-          <button id="fd-devpanel-btn" data-dev class="fd-iconbtn" title="Dev Panel (Ctrl+Shift+D)" style="font-size:11px; padding: 0 6px;">⚙ Dev</button>
+          <button id="fd-devpanel-btn" data-dev class="fd-iconbtn fd-devbtn" title="Dev Panel (Ctrl+Shift+D)">⚙ Dev</button>
         </div>
 
-        <div class="window-body fd-content" style="flex: 1; padding: 2px; position: relative; overflow: hidden;">
+        <div class="window-body fd-content">
           <div id="fd-page" class="page">
             <img id="fd-img" alt="" />
             <div id="fd-hotspots" class="hotspots"></div>
@@ -45,9 +45,9 @@
         </div>
 
         <div class="status-bar">
-          <p class="status-bar-field" style="flex:1; min-width:0;" id="fd-status-main">Home universe: unreachable.</p>
-          <p class="status-bar-field">Tuned to dimension #<span id="fd-dimension">4,817</span></p>
-          <p class="status-bar-field" style="min-width:180px; font-family: monospace; font-size:10px; white-space:nowrap; overflow:hidden;" id="fd-status-diag"></p>
+          <p class="status-bar-field fd-status-main" id="fd-status-main">Home universe: unreachable.</p>
+          <p class="status-bar-field fd-status-dim">Tuned to dimension #<span id="fd-dimension">4,817</span></p>
+          <p class="status-bar-field fd-status-diag" id="fd-status-diag"></p>
           <p class="status-bar-field">🌐 Mirage v0.2</p>
         </div>
       </div>
