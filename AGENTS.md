@@ -48,6 +48,8 @@ There is no lint script.
 - `src/openrouter.ts` — browser wrappers for the `api/` endpoints.
 - `src/devPanel.ts` — Ctrl+Shift+D: page model, link model, link mode, run log.
   Settings persist under `mirage.settings.v2`.
+- `src/vite-env.d.ts` — Vite client types and the `__APP_VERSION__` build constant
+  (from package.json).
 - `src/modelStats.ts` — in-memory cost/latency log.
 
 ## Model output quirks (handled; keep the tests)

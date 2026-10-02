@@ -109,6 +109,8 @@ vercel
 
 The `api/` directory contains Vercel Functions (Node runtime) that hold the key server-side and call OpenRouter. The static build in `dist/` is served for all other routes.
 
+Set `VITE_PUBLIC_URL` so link previews and OpenRouter attribution point at your domain. See `.env.example` for the other optional variables.
+
 ## Project layout
 
 ```
@@ -120,6 +122,7 @@ Mirage/
 │   └── _lib/                # shared server code + tests (not routed)
 │       └── pageContract.ts  # Prompt contract + per-mode prompt builders
 ├── index.html               # Browser chrome shell
+├── public/og.png            # Link-preview image
 ├── src/
 │   ├── main.ts              # Wiring: chrome ↔ session ↔ API
 │   ├── pageMeta.ts          # Fallback url/title derivation
@@ -130,7 +133,7 @@ Mirage/
 │   ├── devPanel.ts          # Ctrl+Shift+D settings + run log
 │   ├── modelStats.ts        # In-memory cost/latency log
 │   ├── types.ts             # Shared types (also used by api/)
-│   ├── vite-env.d.ts        # Vite client types
+│   ├── vite-env.d.ts        # Vite client types + __APP_VERSION__
 │   └── style.css
 ├── .env.example
 ├── package.json
