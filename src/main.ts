@@ -26,7 +26,6 @@ const dom = {
   forward: $<HTMLButtonElement>("#fd-forward"),
   reload: $<HTMLButtonElement>("#fd-reload"),
   home: $<HTMLButtonElement>("#fd-home"),
-  devBtn: $<HTMLButtonElement>("#fd-devpanel-btn"),
   page: $<HTMLDivElement>("#fd-page"),
   img: $<HTMLImageElement>("#fd-img"),
   layer: $<HTMLDivElement>("#fd-hotspots"),
@@ -242,13 +241,11 @@ function wire(): void {
     if (e.key === "Escape") hideSplash();
   });
 
+  // Dev builds only; opened with Ctrl+Shift+D (no toolbar button).
   if (devTools) {
-    const panel = setupDevPanel((s) => {
+    setupDevPanel((s) => {
       settings = s;
     });
-    dom.devBtn.addEventListener("click", panel.toggle);
-  } else {
-    document.querySelectorAll("[data-dev]").forEach((el) => el.remove());
   }
 }
 

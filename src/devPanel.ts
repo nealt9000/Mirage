@@ -1,4 +1,4 @@
-// Hidden dev panel (Ctrl+Shift+D or the ⚙ Dev button): page/link model
+// Hidden dev panel (Ctrl+Shift+D, dev builds only): page/link model
 // selection, link mode, and a live per-request log of cost and latency.
 // Settings persist to localStorage; the run log is in-memory only.
 
@@ -53,7 +53,7 @@ function rowFor(r: RunRecord): HTMLTableRowElement {
   return tr;
 }
 
-export function setupDevPanel(onChange: (s: AppSettings) => void): { toggle: () => void } {
+export function setupDevPanel(onChange: (s: AppSettings) => void): void {
   let settings = loadSettings();
 
   const win = document.createElement("div");
@@ -142,5 +142,4 @@ export function setupDevPanel(onChange: (s: AppSettings) => void): { toggle: () 
       toggle();
     }
   });
-  return { toggle };
 }
