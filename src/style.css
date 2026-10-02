@@ -42,8 +42,11 @@ html, body {
   flex-direction: column;
   width: min(100%, calc((100dvh - 2 * var(--fd-gutter) - var(--fd-chrome-h)) * 4 / 3));
   font-size: 14px;
+  container-type: inline-size;
 }
 .fd-window .title-bar { font-size: 14px; }
+/* One line only: --fd-chrome-h assumes it, and page titles can be long */
+.fd-window .title-bar-text { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fd-window .status-bar { font-size: 13px; }
 
 /* Toolbar */
@@ -246,9 +249,14 @@ html, body {
   z-index: 1;
 }
 
-/* Phones: the window fills the width; drop the least useful chrome */
+/* Phones: the window fills the width */
 @media (max-width: 700px) {
   :root { --fd-gutter: 0px; }
+}
+
+/* A narrow window (phone, or a short/landscape viewport that sizes the
+   window from its height): drop the least useful chrome */
+@container (max-width: 700px) {
   .fd-label, .fd-status-dim, .fd-status-diag { display: none; }
   .fd-url { min-width: 0; }
 }
