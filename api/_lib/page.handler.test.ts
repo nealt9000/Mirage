@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "../page";
 import { STRICT_SUFFIX } from "./pageGen";
 import { DEFAULT_PAGE_MODEL } from "./modelIds";
+import { verifyImage } from "./sign";
 
 const IMG = "data:image/png;base64,iVBORw0KGgo=";
 
@@ -27,6 +28,7 @@ describe("POST /api/page", () => {
     const body = (await res.json()) as any;
     expect(body).toMatchObject({ url: "www.x.com", title: "X", image: IMG, costUsd: 0.034, model: DEFAULT_PAGE_MODEL });
     expect(typeof body.ms).toBe("number");
+    expect(verifyImage(body.image, body.sig)).toBe(true);
   });
 
   it("returns null metadata when the line is missing", async () => {

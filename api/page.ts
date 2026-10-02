@@ -7,6 +7,7 @@ import { json } from "./_lib/http.js";
 import { isImageDataUri, shrinkIfLarge } from "./_lib/image.js";
 import { DEFAULT_PAGE_MODEL, pickModel } from "./_lib/modelIds.js";
 import { postChat } from "./_lib/openrouter.js";
+import { signImage } from "./_lib/sign.js";
 import { extractPageParts, MAX_PROMPT_CHARS, pageBody, parseMeta, STRICT_SUFFIX } from "./_lib/pageGen.js";
 
 export async function POST(req: Request): Promise<Response> {
@@ -31,9 +32,11 @@ export async function POST(req: Request): Promise<Response> {
       const parts = extractPageParts(completion);
       costUsd += parts.costUsd;
       if (!parts.image) continue;
+      const image = await shrinkIfLarge(parts.image);
       const result: PageResult = {
         ...parseMeta(parts.text),
-        image: await shrinkIfLarge(parts.image),
+        image,
+        sig: signImage(image),
         costUsd,
         ms: Date.now() - t0,
         model,

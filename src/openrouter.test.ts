@@ -38,11 +38,11 @@ describe("fetchLinks / resolvePoint", () => {
   it("send image (and point) to /api/links", async () => {
     const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(ok({ links: [], link: null, costUsd: 0, ms: 1, model: "m" })));
     vi.stubGlobal("fetch", fetchMock);
-    await fetchLinks("data:image/png;base64,AA", "m");
-    await resolvePoint("data:image/png;base64,AA", { x: 1, y: 2 }, "m");
+    await fetchLinks("data:image/png;base64,AA", "s", "m");
+    await resolvePoint("data:image/png;base64,AA", "s", { x: 1, y: 2 }, "m");
     expect(fetchMock.mock.calls[0][0]).toBe("/api/links");
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ image: "data:image/png;base64,AA", model: "m" });
-    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ image: "data:image/png;base64,AA", point: { x: 1, y: 2 }, model: "m" });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ image: "data:image/png;base64,AA", sig: "s", model: "m" });
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ image: "data:image/png;base64,AA", sig: "s", point: { x: 1, y: 2 }, model: "m" });
   });
 });
 

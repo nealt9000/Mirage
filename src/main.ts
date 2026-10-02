@@ -101,7 +101,7 @@ async function navigate(req: PageRequest): Promise<void> {
     if (inflight !== ac) return;
     inflight = null;
     const { url, title } = deriveMeta(req, res);
-    const entry: Entry = { imageDataUri: res.image, url, title, links: null, siteKey: siteKeyOf(url) };
+    const entry: Entry = { imageDataUri: res.image, imageSig: res.sig, url, title, links: null, siteKey: siteKeyOf(url) };
     session.push(entry);
     show(entry);
     loading.arrive();
@@ -133,7 +133,7 @@ async function scanLinks(entry: Entry): Promise<void> {
   dom.diag.textContent = "Mapping links…";
   const t0 = performance.now();
   try {
-    const res = await fetchLinks(entry.imageDataUri, settings.linkModel);
+    const res = await fetchLinks(entry.imageDataUri, entry.imageSig, settings.linkModel);
     recordRun({ kind: "links", model: res.model, ms: res.ms, costUsd: res.costUsd, ok: true });
     // An empty map would make the page unclickable; stay unmapped so clicks resolve.
     entry.links = res.links.length ? res.links : null;
@@ -155,7 +155,7 @@ async function resolveAt(point: Point): Promise<void> {
   dom.status.textContent = "Feeling for a link…";
   const t0 = performance.now();
   try {
-    const res = await resolvePoint(entry.imageDataUri, point, settings.linkModel, ac.signal);
+    const res = await resolvePoint(entry.imageDataUri, entry.imageSig, point, settings.linkModel, ac.signal);
     recordRun({ kind: "point", model: res.model, ms: res.ms, costUsd: res.costUsd, ok: true });
     // A newer navigation (or back/forward) supersedes this click.
     if (ac.signal.aborted || session.current() !== entry) return;

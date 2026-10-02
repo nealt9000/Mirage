@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { linkRequest, searchRequest, Session, typedRequest } from "./session";
 import type { Entry, Link } from "./types";
 
-const entry = (url: string): Entry => ({ imageDataUri: `data:image/png;base64,${url}`, url, title: url.toUpperCase(), links: null, siteKey: url });
+const entry = (url: string): Entry => ({ imageDataUri: `data:image/png;base64,${url}`, imageSig: `sig-${url}`, url, title: url.toUpperCase(), links: null, siteKey: url });
 const link = (over: Partial<Link> = {}): Link => ({ label: "Shop", kind: "link", dest: "the shop", external: false, box: [0, 0, 10, 10], ...over });
 
 describe("Session", () => {

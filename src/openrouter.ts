@@ -37,12 +37,12 @@ export function fetchPage(
   return postJson<PageResult>("/api/page", body, signal);
 }
 
-export function fetchLinks(image: string, model: string, signal?: AbortSignal): Promise<LinksResult> {
-  return postJson<LinksResult>("/api/links", { image, model }, signal);
+export function fetchLinks(image: string, sig: string, model: string, signal?: AbortSignal): Promise<LinksResult> {
+  return postJson<LinksResult>("/api/links", { image, sig, model }, signal);
 }
 
-export function resolvePoint(image: string, point: Point, model: string, signal?: AbortSignal): Promise<PointResult> {
-  return postJson<PointResult>("/api/links", { image, point, model }, signal);
+export function resolvePoint(image: string, sig: string, point: Point, model: string, signal?: AbortSignal): Promise<PointResult> {
+  return postJson<PointResult>("/api/links", { image, sig, point, model }, signal);
 }
 
 export type CatalogModel = { id: string; inputModalities: string[]; outputModalities: string[] };

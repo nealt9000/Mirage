@@ -35,6 +35,8 @@ export type PageResult = {
   url: string | null;
   title: string | null;
   image: string;
+  /** HMAC of `image`; send it back with the image to /api/links or as a reference. */
+  sig: string;
   costUsd: number;
   ms: number;
   model: string;
@@ -46,6 +48,8 @@ export type PointResult = { link: Link | null; costUsd: number; ms: number; mode
 
 export type Entry = {
   imageDataUri: string;
+  /** Server signature for imageDataUri (PageResult.sig). */
+  imageSig: string;
   url: string;
   title: string;
   /** null until the link scan arrives (or when it failed / found nothing). */

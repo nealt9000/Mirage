@@ -2,12 +2,16 @@ import sharp from "sharp";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "../links";
 import { DEFAULT_LINK_MODEL } from "./modelIds";
+import { signImage } from "./sign";
 
 const reply = (content: string, cost = 0.004) =>
   new Response(JSON.stringify({ choices: [{ message: { content } }], usage: { cost } }), { status: 200 });
 
-const request = (body: unknown) =>
-  new Request("http://localhost/api/links", { method: "POST", body: JSON.stringify(body) });
+const request = (body: Record<string, unknown>) =>
+  new Request("http://localhost/api/links", {
+    method: "POST",
+    body: JSON.stringify({ sig: typeof body.image === "string" ? signImage(body.image) : undefined, ...body }),
+  });
 
 let IMG = "";
 beforeEach(async () => {
@@ -51,6 +55,14 @@ describe("POST /api/links", () => {
     vi.stubGlobal("fetch", vi.fn());
     expect((await POST(request({ image: "https://x/y.png" }))).status).toBe(400);
     expect((await POST(request({ image: IMG, point: { x: "a" } }))).status).toBe(400);
+  });
+
+  it("rejects an image this server did not sign", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    expect((await POST(request({ image: IMG, sig: "forged" }))).status).toBe(403);
+    expect((await POST(request({ image: IMG, sig: undefined, point: { x: 1, y: 1 } }))).status).toBe(403);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("hides upstream failures", async () => {
