@@ -1,6 +1,6 @@
 // Main app: boots the browser chrome and wires navigation (URL bar, hotspot
 // clicks, search inputs, back/forward/home/reload) to the image pipeline.
-// /api/page draws each page; /api/links maps its links in the background.
+// /api/page builds the prompt and draws each page; /api/links maps its links in the background.
 
 import "./style.css";
 import { loadSettings, setupDevPanel } from "./devPanel";
@@ -8,7 +8,6 @@ import { HotspotLayer } from "./hotspots";
 import { LoadingView } from "./loading";
 import { recordRun } from "./modelStats";
 import { fetchLinks, fetchPage, isAbortError, resolvePoint } from "./openrouter";
-import { buildPagePrompt } from "./pageContract";
 import { deriveMeta, siteKeyOf } from "./pageMeta";
 import { linkRequest, searchRequest, Session, typedRequest } from "./session";
 import type { Entry, PageRequest, Point } from "./types";
@@ -94,9 +93,8 @@ async function navigate(req: PageRequest): Promise<void> {
   loading.start(req.mode, dimension, session.current() !== null);
 
   const t0 = performance.now();
-  const { text, referenceImage } = buildPagePrompt(req);
   try {
-    const res = await fetchPage({ prompt: text, referenceImage, model: settings.pageModel }, ac.signal);
+    const res = await fetchPage({ request: req, model: settings.pageModel }, ac.signal);
     recordRun({ kind: "page", model: res.model, ms: res.ms, costUsd: res.costUsd, ok: true });
     if (inflight !== ac) return;
     inflight = null;

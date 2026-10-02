@@ -1,9 +1,9 @@
 // Prompt contract and per-mode prompt builders for the page image model.
-// Pure functions: /api/page only forwards { prompt, referenceImage }.
+// Pure functions, run server-side by /api/page; the browser never sends prompt text.
 
-import type { PageRequest, PromptParts } from "./types";
+import type { PageRequest, PromptParts } from "../../src/types";
 
-export const MAX_USER_TEXT = 300;
+export const MAX_USER_TEXT = 200;
 
 export const CONTRACT = [
   "Generate a single web page from a parallel universe, as a flat full-page design export (like a desktop web design comp): the page itself, not a photo or mockup of it.",

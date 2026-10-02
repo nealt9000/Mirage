@@ -44,7 +44,7 @@ describe("request builders", () => {
   it("internal link carries site and reference image", () => {
     const from = entry("cheese.net");
     expect(linkRequest(from, link())).toEqual({
-      mode: "internal", site: { url: "cheese.net", title: "CHEESE.NET" }, label: "Shop", dest: "the shop", referenceImage: from.imageDataUri,
+      mode: "internal", site: { url: "cheese.net", title: "CHEESE.NET" }, label: "Shop", dest: "the shop", referenceImage: from.imageDataUri, referenceSig: from.imageSig,
     });
   });
   it("external link carries only label and dest", () => {
@@ -53,7 +53,7 @@ describe("request builders", () => {
   it("search carries site, input label, query and reference image", () => {
     const from = entry("cheese.net");
     expect(searchRequest(from, link({ kind: "input", label: "Search" }), "brie")).toEqual({
-      mode: "search", site: { url: "cheese.net", title: "CHEESE.NET" }, label: "Search", query: "brie", referenceImage: from.imageDataUri,
+      mode: "search", site: { url: "cheese.net", title: "CHEESE.NET" }, label: "Search", query: "brie", referenceImage: from.imageDataUri, referenceSig: from.imageSig,
     });
   });
 });

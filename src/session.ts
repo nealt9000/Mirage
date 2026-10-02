@@ -50,6 +50,7 @@ export function linkRequest(from: Entry, link: Link): PageRequest {
     label: link.label,
     dest: link.dest,
     referenceImage: from.imageDataUri,
+    referenceSig: from.imageSig,
   };
 }
 
@@ -60,5 +61,6 @@ export function searchRequest(from: Entry, link: Link, query: string): PageReque
     label: link.label,
     query,
     referenceImage: from.imageDataUri,
+    referenceSig: from.imageSig,
   };
 }

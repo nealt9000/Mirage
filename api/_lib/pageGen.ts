@@ -3,7 +3,6 @@
 import { completionCost, messageText, type ChatCompletion } from "./openrouter.js";
 
 export const STRICT_SUFFIX = "\n\nRespond with the metadata line and an image only.";
-export const MAX_PROMPT_CHARS = 4000;
 
 export function pageBody(model: string, prompt: string, referenceImage?: string): Record<string, unknown> {
   const content: unknown[] = [{ type: "text", text: prompt }];

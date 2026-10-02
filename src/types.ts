@@ -25,9 +25,9 @@ export type SiteRef = { url: string; title: string };
 
 export type PageRequest =
   | { mode: "typed"; input: string }
-  | { mode: "internal"; site: SiteRef; label: string; dest: string; referenceImage: string }
+  | { mode: "internal"; site: SiteRef; label: string; dest: string; referenceImage: string; referenceSig: string }
   | { mode: "external"; label: string; dest: string }
-  | { mode: "search"; site: SiteRef; label: string; query: string; referenceImage: string };
+  | { mode: "search"; site: SiteRef; label: string; query: string; referenceImage: string; referenceSig: string };
 
 export type PromptParts = { text: string; referenceImage?: string };
 

@@ -22,7 +22,7 @@ describe("buildPagePrompt", () => {
 
   it("internal: includes site, label, dest and passes the reference image", () => {
     const p = buildPagePrompt({
-      mode: "internal", site, label: "Aged Prophecies", dest: "archive of cheese predictions", referenceImage: ref,
+      mode: "internal", site, label: "Aged Prophecies", dest: "archive of cheese predictions", referenceImage: ref, referenceSig: "s",
     });
     expect(p.text).toContain("The Cheese Oracle");
     expect(p.text).toContain("www.cheese-oracle.net/home");
@@ -42,7 +42,7 @@ describe("buildPagePrompt", () => {
   });
 
   it("search: includes site, input label, query and passes the reference image", () => {
-    const p = buildPagePrompt({ mode: "search", site, label: "Search prophecies", query: "brie futures", referenceImage: ref });
+    const p = buildPagePrompt({ mode: "search", site, label: "Search prophecies", query: "brie futures", referenceImage: ref, referenceSig: "s" });
     expect(p.text).toContain("The Cheese Oracle");
     expect(p.text).toContain("Search prophecies");
     expect(p.text).toContain("brie futures");

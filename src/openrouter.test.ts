@@ -9,26 +9,26 @@ describe("fetchPage", () => {
     const result = { url: "a.com", title: "A", image: "data:image/png;base64,AA", costUsd: 0.03, ms: 5000, model: "m" };
     const fetchMock = vi.fn().mockResolvedValue(ok(result));
     vi.stubGlobal("fetch", fetchMock);
-    await expect(fetchPage({ prompt: "p", model: "m" })).resolves.toEqual(result);
+    await expect(fetchPage({ request: { mode: "typed", input: "p" }, model: "m" })).resolves.toEqual(result);
     const [path, init] = fetchMock.mock.calls[0];
     expect(path).toBe("/api/page");
     expect(init.method).toBe("POST");
-    expect(JSON.parse(init.body)).toEqual({ prompt: "p", model: "m" });
+    expect(JSON.parse(init.body)).toEqual({ request: { mode: "typed", input: "p" }, model: "m" });
   });
 
   it("turns a non-OK response into FadedError", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response('{"error":"faded"}', { status: 502 })));
-    await expect(fetchPage({ prompt: "p", model: "m" })).rejects.toBeInstanceOf(FadedError);
+    await expect(fetchPage({ request: { mode: "typed", input: "p" }, model: "m" })).rejects.toBeInstanceOf(FadedError);
   });
 
   it("turns a network failure into FadedError", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
-    await expect(fetchPage({ prompt: "p", model: "m" })).rejects.toBeInstanceOf(FadedError);
+    await expect(fetchPage({ request: { mode: "typed", input: "p" }, model: "m" })).rejects.toBeInstanceOf(FadedError);
   });
 
   it("propagates AbortError (navigating away is not a fade)", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new DOMException("Aborted", "AbortError")));
-    const err = await fetchPage({ prompt: "p", model: "m" }).catch((e) => e);
+    const err = await fetchPage({ request: { mode: "typed", input: "p" }, model: "m" }).catch((e) => e);
     expect(err).not.toBeInstanceOf(FadedError);
     expect(isAbortError(err)).toBe(true);
   });

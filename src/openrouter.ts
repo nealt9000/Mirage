@@ -1,7 +1,7 @@
 // Browser-side wrappers for the same-origin api/ functions. Any failure other
 // than an abort becomes FadedError; upstream detail never reaches the UI.
 
-import type { LinksResult, PageResult, Point, PointResult } from "./types";
+import type { LinksResult, PageRequest, PageResult, Point, PointResult } from "./types";
 
 export class FadedError extends Error {
   constructor() {
@@ -31,7 +31,7 @@ async function postJson<T>(path: string, body: unknown, signal?: AbortSignal): P
 }
 
 export function fetchPage(
-  body: { prompt: string; referenceImage?: string; model: string },
+  body: { request: PageRequest; model: string },
   signal?: AbortSignal
 ): Promise<PageResult> {
   return postJson<PageResult>("/api/page", body, signal);

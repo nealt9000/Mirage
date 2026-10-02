@@ -44,7 +44,7 @@ describe("deriveMeta", () => {
   });
 
   it("internal: slug of the label under the current site", () => {
-    const req: PageRequest = { mode: "internal", site, label: "Aged Prophecies", dest: "x", referenceImage: ref };
+    const req: PageRequest = { mode: "internal", site, label: "Aged Prophecies", dest: "x", referenceImage: ref, referenceSig: "s" };
     expect(deriveMeta(req, none)).toEqual({ url: "www.cheese-oracle.net/aged-prophecies", title: "Aged Prophecies" });
   });
 
@@ -56,7 +56,7 @@ describe("deriveMeta", () => {
   });
 
   it("search: a query url under the current site", () => {
-    const req: PageRequest = { mode: "search", site, label: "Search", query: " blue cheese ", referenceImage: ref };
+    const req: PageRequest = { mode: "search", site, label: "Search", query: " blue cheese ", referenceImage: ref, referenceSig: "s" };
     expect(deriveMeta(req, none)).toEqual({
       url: "www.cheese-oracle.net/search?q=blue%20cheese",
       title: "Search: blue cheese",
