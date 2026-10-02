@@ -12,10 +12,10 @@ Nothing exists until you ask for it. The homepage, the search results, the desti
 URL bar / click / search box
         │
         ▼
- src/session.ts + src/pageContract.ts → prompt for mode typed | internal | external | search
+ src/session.ts → PageRequest for mode typed | internal | external | search
         │                                (internal/search send the current page as a reference image)
         ▼
- POST /api/page  → OpenRouter gemini-3.1-flash-lite-image → { url, title, image, costUsd, ms }
+ POST /api/page  → api/_lib/pageContract.ts builds the prompt → OpenRouter gemini-3.1-flash-lite-image → { url, title, image, sig, costUsd, ms }
         │
         ▼  (background)
  POST /api/links → OpenRouter gemini-3-flash-preview → clickable boxes
@@ -31,6 +31,10 @@ with no calls.
 
 A page takes ~5–8 s and costs ~$0.034; mapping its links adds ~$0.005. Until
 the link map arrives, a click is resolved on demand from a crop around the pointer.
+
+Worst case, one page request makes up to 6 upstream calls: two prompt attempts,
+each retried twice on 429/5xx. Only completed generations are billed, but an
+imageless first answer is billed and then retried.
 
 ## Requirements
 
@@ -70,7 +74,7 @@ The dev server loads the key from `.env.local` and serves the `api/` functions l
 - **◀ ▶** go back / forward (instant, cached)
 - **🏠** tune to a fresh portal homepage
 - **⟳** re-tune to a new neighbour (same address, new universe)
-- **Ctrl+Shift+D** open the tuning panel
+- **Ctrl+Shift+D** open the tuning panel (dev builds only)
 
 ### Try these
 
@@ -85,7 +89,7 @@ The dev server loads the key from `.env.local` and serves the `api/` functions l
 - **Link mode** — `scan` (map every page in the background; hover + search boxes) or `click-only` (resolve each click on demand)
 - **Run log** — cost and latency of every page/scan/click call, plus the session total (in memory only)
 
-Settings persist to `localStorage`.
+Settings persist to `localStorage`. Only available under `npm run dev`, or on a deployment with `VITE_MIRAGE_DEV_TOOLS=1`.
 
 ## Testing
 
@@ -114,10 +118,10 @@ Mirage/
 │   ├── links.ts             # POST: map clickable boxes / resolve one click
 │   ├── models.ts            # GET: model catalog for the dev panel
 │   └── _lib/                # shared server code + tests (not routed)
+│       └── pageContract.ts  # Prompt contract + per-mode prompt builders
 ├── index.html               # Browser chrome shell
 ├── src/
 │   ├── main.ts              # Wiring: chrome ↔ session ↔ API
-│   ├── pageContract.ts      # Prompt contract + per-mode prompt builders
 │   ├── pageMeta.ts          # Fallback url/title derivation
 │   ├── session.ts           # Back/forward history + request builders
 │   ├── hotspots.ts          # Invisible link/search layer over the image
@@ -126,6 +130,7 @@ Mirage/
 │   ├── devPanel.ts          # Ctrl+Shift+D settings + run log
 │   ├── modelStats.ts        # In-memory cost/latency log
 │   ├── types.ts             # Shared types (also used by api/)
+│   ├── vite-env.d.ts        # Vite client types
 │   └── style.css
 ├── .env.example
 ├── package.json
@@ -141,6 +146,10 @@ Mirage/
 - Pages are plain images; no generated markup or script ever runs in the browser
 - The OpenRouter API key lives server-side only (Vercel Function or dev server) — never in the browser bundle
 - Upstream errors are logged server-side; the browser only ever sees "The mirage faded."
+- The browser sends a structured request; prompts are built server-side and user text is capped at 200 characters
+- Page images are HMAC-signed; /api/links and reference images only accept signed images
+- /api/page and /api/links require a same-site Origin
+- Set a credit limit on the OpenRouter key and a per-IP rate limit in the Vercel Firewall before sharing widely
 
 ## Roadmap
 
