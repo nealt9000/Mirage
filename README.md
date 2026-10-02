@@ -109,7 +109,36 @@ vercel
 
 The `api/` directory contains Vercel Functions (Node runtime) that hold the key server-side and call OpenRouter. The static build in `dist/` is served for all other routes.
 
-Set `VITE_PUBLIC_URL` so link previews and OpenRouter attribution point at your domain. See `.env.example` for the other optional variables.
+The MVP lives at **https://mirage.snealthompson.com**. Production builds read that
+URL from the committed `.env.production` (for the Open Graph image). To change
+domains, edit that file and the `VITE_PUBLIC_URL` env var below.
+
+### Launch checklist
+
+1. **Domain:** Vercel project → Settings → Domains → add `mirage.snealthompson.com`.
+   At the DNS host for `snealthompson.com`, add the record Vercel shows, typically
+   `CNAME mirage → cname.vercel-dns.com`. Wait for Vercel to show the domain as valid
+   (it issues the TLS certificate itself).
+2. **Production env vars** (Settings → Environment Variables → Production):
+   - `OPENROUTER_API_KEY`: a key used only for production
+   - `MIRAGE_SIGNING_SECRET`: `openssl rand -base64 32`
+   - `VITE_PUBLIC_URL`: `https://mirage.snealthompson.com`
+   - leave `VITE_MIRAGE_DEV_TOOLS` unset
+3. **Spend cap:** openrouter.ai → Keys → set a credit limit on the production key.
+4. **Rate limits:** Vercel Firewall → rules on `/api/page` (10 req / 60 s per IP)
+   and `/api/links` (30 req / 60 s per IP), action Deny. If rate-limit rules aren't
+   on your plan, enable Bot Protection instead.
+5. **Preview smoke test:** on a preview deploy, load a page, click a link, confirm
+   links get mapped, and confirm
+   `curl -s -o /dev/null -w "%{http_code}\n" -X POST https://<preview>/api/page -d '{}'`
+   prints `403`.
+6. **Go live:** promote to production, then load `https://mirage.snealthompson.com`
+   and repeat the smoke test there. Paste the URL into a link-preview checker to
+   confirm the share image.
+
+The API only answers requests whose `Origin` matches the host they arrive on, so
+both the custom domain and the `*.vercel.app` URLs work without extra config.
+Add other front-end origins with `MIRAGE_ALLOWED_ORIGINS`.
 
 ## Project layout
 

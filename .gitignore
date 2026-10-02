@@ -6,6 +6,7 @@ dist
 .idea
 .env*
 !.env.example
+!.env.production
 
 # MemPalace per-project files (issue #185)
 mempalace.yaml
