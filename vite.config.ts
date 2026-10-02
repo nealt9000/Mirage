@@ -25,7 +25,7 @@ function apiDevServer(): Plugin {
     name: "api-dev-server",
     config(_config, { mode }) {
       const env = loadEnv(mode, process.cwd(), "");
-      for (const key of ["OPENROUTER_API_KEY", "MIRAGE_ALLOWED_MODELS"]) {
+      for (const key of ["OPENROUTER_API_KEY", "MIRAGE_ALLOWED_MODELS", "MIRAGE_SIGNING_SECRET", "MIRAGE_ALLOWED_ORIGINS", "VITE_PUBLIC_URL"]) {
         if (env[key] && !process.env[key]) process.env[key] = env[key];
       }
     },
@@ -46,9 +46,12 @@ function apiDevServer(): Plugin {
             if (!res.writableEnded) ac.abort();
           });
           const response = await handler(
-            new Request(`http://localhost${req.url}`, {
+            new Request(`http://${req.headers.host ?? "localhost"}${req.url}`, {
               method: req.method,
-              headers: { "content-type": req.headers["content-type"] ?? "application/json" },
+              headers: {
+                "content-type": req.headers["content-type"] ?? "application/json",
+                ...(req.headers.origin ? { origin: req.headers.origin } : {}),
+              },
               body: hasBody ? await readBody(req) : undefined,
               signal: ac.signal,
             })

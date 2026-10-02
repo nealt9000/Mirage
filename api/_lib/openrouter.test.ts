@@ -80,3 +80,20 @@ describe("messageText / completionCost", () => {
     expect(completionCost({})).toBe(0);
   });
 });
+
+describe("attribution headers", () => {
+  afterEach(() => {
+    delete process.env.VITE_PUBLIC_URL;
+    vi.unstubAllGlobals();
+  });
+  it("sends HTTP-Referer only when VITE_PUBLIC_URL is set", async () => {
+    process.env.OPENROUTER_API_KEY = "k";
+    const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(new Response("{}", { status: 200 })));
+    vi.stubGlobal("fetch", fetchMock);
+    await postChat({ model: "m" });
+    expect(fetchMock.mock.calls[0][1].headers["HTTP-Referer"]).toBeUndefined();
+    process.env.VITE_PUBLIC_URL = "https://mirage.example";
+    await postChat({ model: "m" });
+    expect(fetchMock.mock.calls[1][1].headers["HTTP-Referer"]).toBe("https://mirage.example");
+  });
+});

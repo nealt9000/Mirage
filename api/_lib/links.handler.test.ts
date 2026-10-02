@@ -10,6 +10,7 @@ const reply = (content: string, cost = 0.004) =>
 const request = (body: Record<string, unknown>) =>
   new Request("http://localhost/api/links", {
     method: "POST",
+    headers: { origin: "http://localhost" },
     body: JSON.stringify({ sig: typeof body.image === "string" ? signImage(body.image) : undefined, ...body }),
   });
 
@@ -62,6 +63,17 @@ describe("POST /api/links", () => {
     vi.stubGlobal("fetch", fetchMock);
     expect((await POST(request({ image: IMG, sig: "forged" }))).status).toBe(403);
     expect((await POST(request({ image: IMG, sig: undefined, point: { x: 1, y: 1 } }))).status).toBe(403);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects requests from other origins", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const url = "http://localhost/api/links";
+    const foreign = new Request(url, { method: "POST", headers: { origin: "https://evil.example" }, body: "{}" });
+    const none = new Request(url, { method: "POST", body: "{}" });
+    expect((await POST(foreign)).status).toBe(403);
+    expect((await POST(none)).status).toBe(403);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

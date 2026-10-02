@@ -57,7 +57,7 @@ export async function postChat(
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://mirage-web.app",
+        ...(process.env.VITE_PUBLIC_URL ? { "HTTP-Referer": process.env.VITE_PUBLIC_URL } : {}),
         "X-OpenRouter-Title": "Mirage",
       },
       body: JSON.stringify({ ...body, usage: { include: true } }),

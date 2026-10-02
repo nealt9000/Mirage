@@ -10,6 +10,7 @@ import { json } from "./_lib/http.js";
 import { shrinkIfLarge } from "./_lib/image.js";
 import { DEFAULT_PAGE_MODEL, pickModel } from "./_lib/modelIds.js";
 import { postChat } from "./_lib/openrouter.js";
+import { isAllowedOrigin } from "./_lib/origin.js";
 import { buildPagePrompt } from "./_lib/pageContract.js";
 import { extractPageParts, pageBody, parseMeta, STRICT_SUFFIX } from "./_lib/pageGen.js";
 import { parsePageRequest } from "./_lib/pageRequest.js";
@@ -17,6 +18,7 @@ import { signImage, verifyImage } from "./_lib/sign.js";
 
 export async function POST(req: Request): Promise<Response> {
   const t0 = Date.now();
+  if (!isAllowedOrigin(req)) return json({ error: "forbidden" }, 403);
   let input: { request?: unknown; model?: unknown } | null;
   try {
     input = (await req.json()) as typeof input;

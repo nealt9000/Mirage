@@ -13,7 +13,7 @@ const completion = (content: string, image?: string, cost = 0.034) => new Respon
 }), { status: 200 });
 
 const request = (body: unknown) =>
-  new Request("http://localhost/api/page", { method: "POST", body: JSON.stringify(body) });
+  new Request("http://localhost/api/page", { method: "POST", headers: { origin: "http://localhost" }, body: JSON.stringify(body) });
 
 const typed = (input = "moon.com") => ({ request: { mode: "typed", input } });
 const internal = (referenceImage: string, referenceSig: string) => ({
@@ -94,7 +94,18 @@ describe("POST /api/page", () => {
     expect((await POST(request({}))).status).toBe(400);
     expect((await POST(request(null))).status).toBe(400);
     expect((await POST(request({ prompt: "draw" }))).status).toBe(400);
-    expect((await POST(new Request("http://localhost/api/page", { method: "POST", body: "not json" }))).status).toBe(400);
+    expect((await POST(new Request("http://localhost/api/page", { method: "POST", headers: { origin: "http://localhost" }, body: "not json" }))).status).toBe(400);
+  });
+
+  it("rejects requests from other origins", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const url = "http://localhost/api/page";
+    const foreign = new Request(url, { method: "POST", headers: { origin: "https://evil.example" }, body: "{}" });
+    const none = new Request(url, { method: "POST", body: "{}" });
+    expect((await POST(foreign)).status).toBe(403);
+    expect((await POST(none)).status).toBe(403);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("forwards a signed reference image", async () => {

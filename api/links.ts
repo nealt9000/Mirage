@@ -10,10 +10,12 @@ import { cropAround, isImageDataUri } from "./_lib/image.js";
 import { parseLinks, parsePointLink, pointPrompt, SCAN_PROMPT, toPoint, visionBody } from "./_lib/links.js";
 import { DEFAULT_LINK_MODEL, pickModel } from "./_lib/modelIds.js";
 import { completionCost, messageText, postChat } from "./_lib/openrouter.js";
+import { isAllowedOrigin } from "./_lib/origin.js";
 import { verifyImage } from "./_lib/sign.js";
 
 export async function POST(req: Request): Promise<Response> {
   const t0 = Date.now();
+  if (!isAllowedOrigin(req)) return json({ error: "forbidden" }, 403);
   let input: { image?: unknown; sig?: unknown; point?: unknown; model?: unknown };
   try {
     input = (await req.json()) as typeof input;
