@@ -9,7 +9,7 @@ import { LoadingView } from "./loading";
 import { recordRun } from "./modelStats";
 import { fetchLinks, fetchPage, isAbortError, resolvePoint } from "./openrouter";
 import { deriveMeta, siteKeyOf } from "./pageMeta";
-import { linkRequest, searchRequest, Session, typedRequest } from "./session";
+import { linkRequest, NavThrottle, requestKey, searchRequest, Session, typedRequest } from "./session";
 import type { Entry, PageRequest, Point } from "./types";
 
 const $ = <T extends Element>(sel: string): T => {
@@ -47,6 +47,7 @@ const dom = {
 // ---------------------------------------------------------------------------
 
 const session = new Session();
+const throttle = new NavThrottle();
 let settings = loadSettings();
 let inflight: AbortController | null = null;
 let lastRequest: PageRequest | null = null;
@@ -82,6 +83,7 @@ const randomDimension = () => Math.floor(Math.random() * 9000) + 1000;
 // ---------------------------------------------------------------------------
 
 async function navigate(req: PageRequest): Promise<void> {
+  if (!throttle.tryStart(requestKey(req), performance.now())) return;
   hideSplash();
   cancelResolve();
   inflight?.abort();
@@ -98,6 +100,7 @@ async function navigate(req: PageRequest): Promise<void> {
     recordRun({ kind: "page", model: res.model, ms: res.ms, costUsd: res.costUsd, ok: true });
     if (inflight !== ac) return;
     inflight = null;
+    throttle.finish();
     const { url, title } = deriveMeta(req, res);
     const entry: Entry = { imageDataUri: res.image, imageSig: res.sig, url, title, links: null, siteKey: siteKeyOf(url) };
     session.push(entry);
@@ -108,6 +111,7 @@ async function navigate(req: PageRequest): Promise<void> {
   } catch (e) {
     if (isAbortError(e) || inflight !== ac) return;
     inflight = null;
+    throttle.finish();
     recordRun({ kind: "page", model: settings.pageModel, ms: Math.round(performance.now() - t0), costUsd: 0, ok: false });
     loading.stop();
     dom.faded.hidden = false;
@@ -180,6 +184,7 @@ function cancelResolve(): void {
 }
 
 function cancelLoad(): void {
+  throttle.finish();
   cancelResolve();
   if (!inflight) return;
   inflight.abort();

@@ -67,3 +67,38 @@ export function searchRequest(from: Entry, link: Link, query: string): PageReque
     referenceSig: from.imageSig,
   };
 }
+
+/** Minimum time between starting two page generations (each one is billed). */
+export const MIN_NAV_GAP_MS = 1500;
+
+/** Identity of a navigation for de-duplication; the reference image doesn't matter. */
+export function requestKey(req: PageRequest): string {
+  if (req.mode === "internal" || req.mode === "search") {
+    const { referenceImage: _image, referenceSig: _sig, ...rest } = req;
+    return JSON.stringify(rest);
+  }
+  return JSON.stringify(req);
+}
+
+/**
+ * Drops navigations that would only burn money: the same request again while
+ * it is still loading, or any request within minGapMs of the last one started.
+ */
+export class NavThrottle {
+  private lastStart = -Infinity;
+  private inflightKey: string | null = null;
+
+  constructor(private readonly minGapMs = MIN_NAV_GAP_MS) {}
+
+  tryStart(key: string, now: number): boolean {
+    if (key === this.inflightKey) return false;
+    if (now - this.lastStart < this.minGapMs) return false;
+    this.lastStart = now;
+    this.inflightKey = key;
+    return true;
+  }
+
+  finish(): void {
+    this.inflightKey = null;
+  }
+}

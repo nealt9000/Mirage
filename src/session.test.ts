@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { linkRequest, searchRequest, Session, typedRequest } from "./session";
+import { linkRequest, NavThrottle, requestKey, searchRequest, Session, typedRequest } from "./session";
 import type { Entry, Link } from "./types";
 
 const entry = (url: string): Entry => ({ imageDataUri: `data:image/png;base64,${url}`, imageSig: `sig-${url}`, url, title: url.toUpperCase(), links: null, siteKey: url });
@@ -55,5 +55,41 @@ describe("request builders", () => {
     expect(searchRequest(from, link({ kind: "input", label: "Search" }), "brie")).toEqual({
       mode: "search", site: { url: "cheese.net", title: "CHEESE.NET" }, label: "Search", query: "brie", referenceImage: from.imageDataUri, referenceSig: from.imageSig,
     });
+  });
+});
+
+describe("NavThrottle", () => {
+  it("lets the first navigation through", () => {
+    expect(new NavThrottle(1500).tryStart("a", 0)).toBe(true);
+  });
+  it("ignores the same request while it is loading, until finish()", () => {
+    const t = new NavThrottle(1500);
+    t.tryStart("a", 0);
+    expect(t.tryStart("a", 5000)).toBe(false);
+    t.finish();
+    expect(t.tryStart("a", 5000)).toBe(true);
+  });
+  it("ignores any navigation inside the minimum gap", () => {
+    const t = new NavThrottle(1500);
+    t.tryStart("a", 0);
+    expect(t.tryStart("b", 1000)).toBe(false);
+    expect(t.tryStart("b", 1500)).toBe(true);
+  });
+  it("a rejected attempt does not restart the gap", () => {
+    const t = new NavThrottle(1500);
+    t.tryStart("a", 0);
+    t.tryStart("b", 1000);
+    expect(t.tryStart("c", 1600)).toBe(true);
+  });
+});
+
+describe("requestKey", () => {
+  it("ignores the reference image and signature", () => {
+    const a = linkRequest(entry("cheese.net"), link());
+    const b = { ...a, referenceImage: "data:image/png;base64,ZZ", referenceSig: "other" };
+    expect(requestKey(b)).toBe(requestKey(a));
+  });
+  it("differs by destination", () => {
+    expect(requestKey(typedRequest("a.com"))).not.toBe(requestKey(typedRequest("b.com")));
   });
 });
