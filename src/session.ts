@@ -6,9 +6,14 @@ import type { Entry, Link, PageRequest } from "./types";
 /** Longest text a visitor can type; matches the server's MAX_USER_TEXT. */
 export const MAX_INPUT_CHARS = 200;
 
+/** Each entry holds a page image of up to ~3.5 MB; older ones are dropped. */
+export const MAX_HISTORY = 40;
+
 export class Session {
   private entries: Entry[] = [];
   private cursor = -1;
+
+  constructor(private readonly maxEntries = MAX_HISTORY) {}
 
   current(): Entry | null {
     return this.entries[this.cursor] ?? null;
@@ -17,6 +22,7 @@ export class Session {
   push(entry: Entry): void {
     this.entries = this.entries.slice(0, this.cursor + 1);
     this.entries.push(entry);
+    if (this.entries.length > this.maxEntries) this.entries.shift();
     this.cursor = this.entries.length - 1;
   }
 

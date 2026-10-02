@@ -6,6 +6,17 @@ const entry = (url: string): Entry => ({ imageDataUri: `data:image/png;base64,${
 const link = (over: Partial<Link> = {}): Link => ({ label: "Shop", kind: "link", dest: "the shop", external: false, box: [0, 0, 10, 10], ...over });
 
 describe("Session", () => {
+  it("keeps only the newest maxEntries pages", () => {
+    const s = new Session(3);
+    const [a, b, c, d] = [entry("a"), entry("b"), entry("c"), entry("d")];
+    s.push(a); s.push(b); s.push(c); s.push(d);
+    expect(s.current()).toBe(d);
+    expect(s.back()).toBe(c);
+    expect(s.back()).toBe(b);
+    expect(s.canBack()).toBe(false);
+    expect(s.forward()).toBe(c);
+  });
+
   it("starts empty", () => {
     const s = new Session();
     expect(s.current()).toBeNull();
